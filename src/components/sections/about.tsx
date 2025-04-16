@@ -59,7 +59,7 @@ const About = () => {
         >
           <h2 className="text-3xl font-bold mb-4">About Me</h2>
           <p className="text-xl font-semibold text-primary">
-            4 Year&apos;s Experience on Full-Stack Developer
+            5 Year&apos;s Experience on Full-Stack Developer
           </p>
         </motion.div>
 
