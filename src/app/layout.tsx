@@ -22,7 +22,8 @@ export const metadata: Metadata = {
   description: 'Full-Stack Developer, IT Support Engineer, QA Automation Engineer',
 }
 
-export const viewport: Viewport = {
+// Viewport configuration
+export const viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
