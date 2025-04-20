@@ -14,7 +14,7 @@ const blogPosts = [
     description: "Harnessing dynamic data insights with advanced analytics for transformative research.",
     category: "Data Science",
     image: "/img/blog/1.jpg",
-    url: "/blog/data-science"
+    url: "https://medium.com/@ashkan.mohammed98/data-science-roadmap-an-easy-to-learn-pathway-for-beginners-af69d4058198"
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const blogPosts = [
     description: "Transforming creative processes through innovative generative models and exquisite algorithms.",
     category: "AI/ML",
     image: "/img/blog/2.jpg",
-    url: "/blog/generative-ai"
+    url: "https://medium.com/@ashkan.mohammed98/transforming-creative-processes-through-generative-ai-a-step-by-step-guide-1d9d410c86df"
   },
   {
     id: 3,
@@ -32,7 +32,7 @@ const blogPosts = [
     description: "Empowering systems with machine learning techniques to unlock complex patterns.",
     category: "AI/ML",
     image: "/img/blog/3.jpg",
-    url: "/blog/machine-learning"
+    url: "https://medium.com/@ashkan.mohammed98/machine-learning-empowering-systems-to-unlock-complex-patterns-a-step-by-step-guide-71d0222d6060"
   },
   {
     id: 4,
