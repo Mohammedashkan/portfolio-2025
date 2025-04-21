@@ -55,17 +55,17 @@ const Portfolio = () => {
       : projects.filter((project) => project.category === filter);
 
   return (
-    <section id="portfolio" className="py-16 md:py-24 bg-muted/30">
-      <div className="container mx-auto">
+    <section id="portfolio" className="py-10 sm:py-14 md:py-20 lg:py-24 bg-muted/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
-          <h2 className="text-3xl font-bold mb-4">My Portfolio</h2>
-          <p className="text-muted-foreground">what I will do for you</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-4">My Portfolio</h2>
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">what I will do for you</p>
         </motion.div>
 
         <motion.div
@@ -111,7 +111,7 @@ const Portfolio = () => {
             QA Testing
           </Button>
         </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filteredProjects.map((project, index) => (
             <motion.div
               key={index}
