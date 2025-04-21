@@ -16,6 +16,7 @@ const Portfolio = () => {
       category: "data-science",
       description: "Python/SQL/AWS expert; Azure-certified; built automated analysis systems",
       image: "/img/portfolio/1.jpg",
+      link: "https://diproject.netlify.app/", // <-- Added link property
     },
     {
       title: "Web Development",
@@ -137,7 +138,13 @@ const Portfolio = () => {
                     {project.description}
                   </p>
                   <Button variant="link" className="px-0" asChild>
-                    <Link href="/portfolio">Explore More</Link>
+                    <Link
+                      href={project.link ? project.link : "/portfolio"}
+                      target={project.link ? "_blank" : undefined}
+                      rel={project.link ? "noopener noreferrer" : undefined}
+                    >
+                      Explore More
+                    </Link>
                   </Button>
                 </div>
               </div>

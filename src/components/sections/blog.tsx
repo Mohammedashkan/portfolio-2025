@@ -41,7 +41,7 @@ const blogPosts = [
     description: "Building dynamic web interfaces using React for modern interactive experiences.",
     category: "Web Development",
     image: "/img/blog/4.jpg",
-    url: "/blog/react-web-development"
+    url: "https://medium.com/@ashkan.mohammed98/building-dynamic-web-interfaces-with-react-a-step-by-step-guide-to-modern-interactive-experiences-4f1bcafbb016"
   },
   {
     id: 5,
