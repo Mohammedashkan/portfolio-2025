@@ -458,4 +458,24 @@
   }
 }
 
+/* Add this for a universal container margin adjustment */
+.main-container, .container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .main-container, .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-container, .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 /* Keep your existing rotate-text styles */
