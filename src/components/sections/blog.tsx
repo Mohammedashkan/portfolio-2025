@@ -50,7 +50,7 @@ const blogPosts = [
     description: "Ensuring software quality with rigorous testing methodologies that drive reliability.",
     category: "QA",
     image: "/img/blog/5.jpg",
-    url: "/blog/quality-assurance"
+    url: "https://medium.com/@ashkan.mohammed98/beyond-bug-hunting-why-rigorous-qa-is-the-unsung-hero-of-software-success-5f92edad57ee"
   },
   {
     id: 6,
@@ -59,7 +59,7 @@ const blogPosts = [
     description: "Designing sleek mobile app landing pages to captivate user interest.",
     category: "UI/UX",
     image: "/img/blog/6.jpg",
-    url: "/blog/mobile-app-landing"
+    url: "https://medium.com/@ashkan.mohammed98/designing-mobile-app-landing-pages-that-captivate-users-instantly-efa1ba1d0294"
   }
 ];
 
