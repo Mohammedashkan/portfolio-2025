@@ -23,30 +23,35 @@ const Portfolio = () => {
       category: "web",
       description: "JavaScript/cloud apps (AWS/Azure); deployed secure CMS via (Setup Web in Cloud)",
       image: "/img/portfolio/2.jpg",
+      link: "https://dev.d3bzznk57htwxg.amplifyapp.com/", //  <-- Added link property
     },
     {
       title: "Web Development",
       category: "web",
       description: "Dynamic React task manager streamlines project workflows with intuitive drag-and-drop.",
       image: "/img/portfolio/3.jpg",
+      link:"/", // <-- Added link property
     },
     {
       title: "AI / ML Project",
       category: "ai",
       description: "Innovative crypto platform revolutionizes seamless secure transactions and decentralized finance.",
       image: "/img/portfolio/4.jpg",
+      link:"/", // <-- Added link property
     },
     {
       title: "AI / ML Project",
       category: "ai",
       description: "Intelligent Gemini tracker monitors AI trends seamlessly for optimal performance",
       image: "/img/portfolio/5.jpg",
+      link:"/", // <-- Added link property
     },
     {
       title: "QA Testing",
       category: "qa",
       description: "Proficient in automated testing (Postman, API tools) and test case execution.",
       image: "/img/portfolio/6.jpg",
+      link:"/", // <-- Added link property
     },
   ];
 

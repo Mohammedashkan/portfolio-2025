@@ -14,21 +14,25 @@ const Services = () => {
       title: "Data Science Development",
       description: "Leverage expertise in Python, SQL, and AWS to transform raw data into actionable insights. Proficient in data infrastructure management, cloud-based solutions (AWS, Azure), and large-scale dataset processing. ",
       icon: <Database className="h-10 w-10 text-primary" />,
+      pdf: "/img/Data-Science.pdf",
     },
     {
       title: "Web Development",
       description: "Skilled in deploying cloud-optimized web applications with security protocols and scalability. Proficient in JavaScript, Linux administration, and cloud platforms (AWS, Azure). Experience in configuring network infrastructure (CISCO, Firewall) and headless CMS integration. ",
       icon: <Code className="h-10 w-10 text-primary" />,
+      pdf: "/img/Web Development.pdf",
     },
     {
       title: "AI / ML App Development",
       description: "Develop custom AI agents using Python, AWS, and ERP systems. Certified in CISSP for ethical AI governance and risk assessment. Implemented automated tracking systems (General AI Pro Tracker) and cloud-based AI solutions. ",
       icon: <Bot className="h-10 w-10 text-primary" />,
+      pdf: "/img/AI-and-ML.pdf",
     },
     {
       title: "QA Automation",
       description: "Proficient in automated testing (Postman, API tools) and test case execution. Certified in CISSP for security-driven testing protocols. Experience in shift-left methodologies, network troubleshooting, and documentation. Collaborated on software QA projects (RW-EU-ASSCOUR) with a focus on system integration and data flow validation.",
       icon: <TestTube className="h-10 w-10 text-primary" />,
+      pdf: "/img/QA-Automation.pdf",
     },
   ];
 
@@ -65,7 +69,9 @@ const Services = () => {
                 </CardContent>
                 <CardFooter>
                   <Button variant="link" className="px-0" asChild>
-                    <Link href="/services">Read More</Link>
+                    <a href={service.pdf} download>
+                      Read More
+                    </a>
                   </Button>
                 </CardFooter>
               </Card>
