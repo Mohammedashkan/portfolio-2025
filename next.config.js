@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   transpilePackages: ['debug', 'supports-color'],
   experimental: {
     serverComponentsExternalPackages: ['debug', 'supports-color']
