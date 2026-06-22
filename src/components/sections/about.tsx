@@ -72,13 +72,9 @@ const About = () => {
             className="space-y-6"
           >
             <p className="text-muted-foreground">
-              Hi, my name is Ashkan I&apos;m a Creative / Full Stack Developer from
-              Sri Lanka. Over the years I developed a skill set in various
-              technologies and frameworks, including React, React JS, Node JS /
-              Express and TypeScript. Where I really value clean and readable
-              code. Also, I&apos;m passionate about UX / UI. And last but not least, I
-              am the proud father of two boys. I enjoy playing sports and I&apos;m a
-              little bit of a geek now and then!
+              Hi, I'm Mohamed Ashkan, an IT Coordinator, IT Support Professional, and Full Stack Developer from Sri Lanka. 
+              I have experience in IT operations, system administration, technical support, vendor management, and modern web development. 
+              I'm passionate about solving technical challenges, building efficient solutions, and delivering great user experiences.
             </p>
 
             <Tabs defaultValue="achievements" className="w-full">
