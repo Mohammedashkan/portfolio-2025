@@ -8,22 +8,56 @@ const nodemailer = require('nodemailer');
 // Load environment variables
 dotenv.config();
 
+// ---------------------------------------------------------------------------
+// 1. Environment Validation (Fail loudly if secrets are missing)
+// ---------------------------------------------------------------------------
+const REQUIRED_ENV_VARS = [
+  'OPENAI_API_KEY', 
+  'EMAIL_HOST', 
+  'EMAIL_USER', 
+  'EMAIL_PASS', 
+  'EMAIL_TO'
+];
+
+const missingVars = REQUIRED_ENV_VARS.filter(v => !process.env[v]);
+if (missingVars.length > 0) {
+  console.error(`FATAL: Missing required environment variables: ${missingVars.join(', ')}`);
+  console.error('Please set them in your .env file before starting the server.');
+  process.exit(1);
+}
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// ---------------------------------------------------------------------------
+// 2. Security & Middleware Configurations
+// ---------------------------------------------------------------------------
+// Restrict CORS to known origins in production
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:3000', 'http://localhost:5000'];
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('CORS policy: Origin not allowed'), false);
+    }
+    return callback(null, true);
+  }
+}));
 
-// Setup email transporter (for production, use a service like SendGrid)
+// Limit payload size to prevent DoS via massive JSON payloads
+app.use(express.json({ limit: '10kb' }));
+
+// ---------------------------------------------------------------------------
+// 3. Service Initialization
+// ---------------------------------------------------------------------------
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.example.com',
-  port: parseInt(process.env.EMAIL_PORT || '587'),
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT || '587', 10),
   secure: false,
   auth: {
     user: process.env.EMAIL_USER,
@@ -31,96 +65,124 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Routes
+// ---------------------------------------------------------------------------
+// 4. Security Utilities (Input Sanitization & XSS Prevention)
+// ---------------------------------------------------------------------------
+const MAX_LENGTHS = { name: 100, email: 200, subject: 200, message: 5000, chat: 2000 };
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function sanitize(str, maxLen) {
+  if (typeof str !== 'string') return '';
+  return str.trim().slice(0, maxLen);
+}
+
+// Prevent XSS by escaping HTML entities before interpolating into email templates
+function escapeHtml(unsafe) {
+  if (typeof unsafe !== 'string') return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// ---------------------------------------------------------------------------
+// 5. Routes
+// ---------------------------------------------------------------------------
+
+// POST /api/chatbot
 app.post('/api/chatbot', async (req, res) => {
   try {
     const { message } = req.body;
+    const cleanMessage = sanitize(message, MAX_LENGTHS.chat);
 
-    // Portfolio information for context
+    if (!cleanMessage) {
+      return res.status(400).json({ error: "Message is required." });
+    }
+
+    console.log("[chatbot] Processing request..."); // Never log raw user prompts in production
+
     const portfolioInfo = `
-      About Ashkan:
-      - Full-Stack Developer and QA Automation Engineer
-      - 3 years of experience in web development
-      - Specializes in React, Next.js, Node.js, and TypeScript
-      - Based in Sri Lanka
-      - Passionate about UI/UX design
-      
-      Services:
-      - Web Development
-      - Data Science Solutions
-      - AI/ML Application Development
-      - QA Automation
-
-      Contact Info:
-      - Email: ashkan@example.com
-      - Phone: +94 123 456 789
-      - Location: Colombo, Sri Lanka
+      About Ashkan: Full-Stack Developer and QA Automation Engineer based in Sri Lanka.
+      Services: Web Development, Data Science, AI/ML, QA Automation.
     `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o-mini", // Updated to a more cost-effective and modern model
       messages: [
         {
           role: "system",
-          content: `You are a helpful virtual assistant for Ashkan's portfolio website. Answer questions about Ashkan, his skills, services, and portfolio. Be friendly, concise, and professional. Here's information about Ashkan's portfolio: ${portfolioInfo}`,
+          content: `You are a helpful virtual assistant for Ashkan's portfolio website. Be friendly, concise, and professional. Context: ${portfolioInfo}`,
         },
-        {
-          role: "user",
-          content: message,
-        },
+        { role: "user", content: cleanMessage },
       ],
       temperature: 0.7,
       max_tokens: 500,
     });
 
-    res.json({
-      response: response.choices[0].message.content,
-    });
+    res.json({ response: response.choices[0].message.content });
   } catch (error) {
-    console.error("OpenAI API error:", error);
-    res.status(500).json({ error: "Failed to get response from AI" });
+    // Scrub internal OpenAI error details from the response
+    console.error("[chatbot] OpenAI API error:", error instanceof Error ? error.message : "Unknown error");
+    res.status(500).json({ error: "Failed to get response from AI." });
   }
 });
 
+// POST /api/contact
 app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
-    // Validate input
-    if (!name || !email || !subject || !message) {
-      return res.status(400).json({ error: "Missing required fields" });
+    // 1. Sanitize and Validate at the boundary
+    const cleanName = sanitize(name, MAX_LENGTHS.name);
+    const cleanEmail = sanitize(email, MAX_LENGTHS.email);
+    const cleanSubject = sanitize(subject, MAX_LENGTHS.subject);
+    const cleanMessage = sanitize(message, MAX_LENGTHS.message);
+
+    if (!cleanName || !cleanEmail || !cleanSubject || !cleanMessage) {
+      return res.status(400).json({ error: "Missing or invalid required fields." });
     }
 
-    // Send email
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return res.status(400).json({ error: "Invalid email format." });
+    }
+
+    // 2. Prevent XSS in HTML emails
+    const safeName = escapeHtml(cleanName);
+    const safeEmail = escapeHtml(cleanEmail);
+    const safeSubject = escapeHtml(cleanSubject);
+    // Preserve line breaks safely in HTML
+    const safeMessage = escapeHtml(cleanMessage).replace(/\n/g, '<br>'); 
+
+    // 3. Send Email
     await transporter.sendMail({
       from: process.env.EMAIL_FROM || 'noreply@example.com',
-      to: process.env.EMAIL_TO || 'ashkan@example.com',
-      subject: `Portfolio Contact: ${subject}`,
-      text: `
-        Name: ${name}
-        Email: ${email}
-        
-        Message:
-        ${message}
-      `,
+      to: process.env.EMAIL_TO,
+      subject: `Portfolio Contact: ${cleanSubject}`,
+      text: `Name: ${cleanName}\nEmail: ${cleanEmail}\n\nMessage:\n${cleanMessage}`,
       html: `
         <h2>New Message from Portfolio Contact Form</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Subject:</strong> ${safeSubject}</p>
         <h3>Message:</h3>
-        <p>${message}</p>
+        <p>${safeMessage}</p>
       `,
     });
 
+    console.log(`[contact] Email sent successfully from: ${cleanEmail}`);
     res.json({ success: true });
   } catch (error) {
-    console.error("Contact form error:", error);
-    res.status(500).json({ error: "Failed to process contact form" });
+    // Scrub internal Nodemailer/SMTP error details
+    console.error("[contact] Email send failed:", error instanceof Error ? error.message : "Unknown error");
+    res.status(500).json({ error: "Failed to process contact form. Please try again later." });
   }
 });
 
-// Start server
+// ---------------------------------------------------------------------------
+// 6. Start Server
+// ---------------------------------------------------------------------------
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`[server] Backend running on port ${PORT}`);
 });
