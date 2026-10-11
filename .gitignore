@@ -4,6 +4,9 @@
 /node_modules
 /.pnp
 .pnp.js
+/yarn.lock
+/package-lock.json
+/pnpm-lock.yaml
 
 # testing
 /coverage
@@ -24,17 +27,18 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-# Add this if not already present
-# Add this line to your .gitignore
-# Add this line if it's not already there
+# ---------------------------------------------------------
+# Environment variables (CRITICAL: Never commit secrets)
+# ---------------------------------------------------------
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
 
 # vercel
-
+.vercel
 
 # typescript
 *.tsbuildinfo
@@ -42,3 +46,10 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# ---------------------------------------------------------
+# Local Data Storage (Prevent committing user PII)
+# ---------------------------------------------------------
+# Your app saves contact form submissions to /data/contacts.json.
+# Never commit user emails, names, or messages to GitHub.
+/data/
